@@ -29,20 +29,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function CoinInfo({ coin }) {
-  const [historicalData, setHistoricalData] = useState();
   const [days, setDays] = useState(1);
-
+  const [flag, setFlag] = useState(false);
   const { symbol, currency } = CryptoState();
 
   const fetchChart = async () => {
-    const { data } = await axios.get(HistoricalChart);
+    const data = await axios.get(HistoricalChart);
+    setFlag(true);
     setHistoricalData(data.prices);
+    console.log(data.prices);
+    console.log(coin);
   };
+  const [historicalData, setHistoricalData] = useState();
 
   useEffect(() => {
     fetchChart();
   }, [currency, days]);
-
   const darkTheme = createTheme({
     palette: {
       primary: {
@@ -57,20 +59,26 @@ function CoinInfo({ coin }) {
   return (
     <ThemeProvider theme={darkTheme}>
       <div className={classes.container}>
-        (
-        <CircularProgress style={{ color: "gold" }} size={250} thickness={1} />
-        ): (
-        <>
-          <Line data={{
-            labels: historicalData.map((coin) =>{
-              let data = new Data(coin[0]);
-              let time = 
-              data.getHours()>12
-              ?`${data.getHours()-12}:${date.getMinutes()}`
-            })
-          }} />
-        </>
-        );
+        {flag && historicalData ? (
+          <Line
+            data={{
+              labels: historicalData.map((coinData) => {
+                let date = new Date(coinData[0]);
+                let time =
+                  date.getHours() > 12
+                    ? `${date.getHours() - 12}:${date.getMinutes()}`
+                    : `${date.getHours()}:${date.getMinutes()}`;
+                return time;
+              }),
+            }}
+          />
+        ) : (
+          <CircularProgress
+            style={{ color: "gold" }}
+            size={250}
+            thickness={1}
+          />
+        )}{" "}
       </div>
     </ThemeProvider>
   );

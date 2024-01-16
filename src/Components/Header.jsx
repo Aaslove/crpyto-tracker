@@ -34,7 +34,7 @@ function Header() {
   });
 
   const { currency, setCurrency } = CryptoState();
-  console.log(currency);
+  // console.log(currency);
   return (
     <ThemeProvider theme={darkTheme}>
       <AppBar color="transparent" position="static">
